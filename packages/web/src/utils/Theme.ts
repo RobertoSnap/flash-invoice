@@ -1,7 +1,7 @@
-// import { ThemeType } from "grommet";
+import { ThemeType } from "grommet";
 import { deepFreeze } from "grommet/utils";
 
-export const Theme = deepFreeze({
+export const Theme: ThemeType = deepFreeze({
   rounding: 4,
   spacing: 24,
   defaultMode: "dark",
@@ -33,7 +33,7 @@ export const Theme = deepFreeze({
       },
       yellow: {
         light: "#ffa34d",
-        dark: "##f8efa0"
+        dark: "#fdfa6d"
       },
       orange: {
         light: "#f2783a",
@@ -78,5 +78,8 @@ export const Theme = deepFreeze({
     primary: {
       color: "brand"
     }
+  },
+  anchor: {
+    color: "orange"
   }
 });
