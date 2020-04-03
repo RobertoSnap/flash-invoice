@@ -7,23 +7,20 @@ import { SpaceContext } from '../../App';
 interface Props { }
 
 export const AccountEdit: React.FC<Props> = () => {
-    const [space, name] = useContext(SpaceContext)
-    const { register, handleSubmit, errors, setValue } = useForm()
-    const [submitting, setSubmitting] = useState(false);
+    const [space, name, getSpace] = useContext(SpaceContext)
+    const { register, handleSubmit, errors, setValue, formState } = useForm()
 
-    useEffect(() => {
-        if (name) {
-            console.log("setting name", name);
-
-            setValue("name", name)
-        }
-    }, [name, setValue])
+    // useEffect(() => {
+    //     if (name) {
+    //         // setValue("name", name)
+    //     }
+    // }, [name, setValue])
 
     const onSubmit = (data: { [field: string]: string }) => {
-        setSubmitting(true)
+        console.log(data);
         const promises = Object.keys(data).map(field => space.public.set(field, data[field]))
         Promise.all(promises).finally(() => {
-            setSubmitting(false)
+            getSpace()
         })
     }
 
@@ -36,14 +33,16 @@ export const AccountEdit: React.FC<Props> = () => {
                         required: true,
                     })}
                     name="name"
+                    value={name}
                 />
+                {/* <input name="name" ref={register} /> */}
                 {errors.name && <Text size="small">Name is required</Text>}
 
                 <Button
                     icon={<Save />}
                     label="Update"
                     type="submit"
-                    disabled={submitting}
+                    disabled={formState.isSubmitting || Object.keys(formState.touched).length === 0}
                     color="status-ok"
                     hoverIndicator
                 />

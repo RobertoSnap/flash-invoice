@@ -8,7 +8,7 @@ import { Theme } from './utils/Theme';
 import { use3Box } from './utils/use3Box';
 
 export const DarkTheme = React.createContext<[boolean, (boolean: boolean) => void]>([false, (arg: boolean) => { }])
-export const SpaceContext = React.createContext<[any, string | undefined]>([{}, undefined])
+export const SpaceContext = React.createContext<[any, string | undefined, () => void]>([{}, undefined, () => { }])
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
@@ -32,7 +32,7 @@ function App() {
   return (
     <BrowserRouter>
       <DarkTheme.Provider value={[darkTheme, setDarkTheme]}>
-        <SpaceContext.Provider value={[space, name]}>
+        <SpaceContext.Provider value={[space, name, getSpace]}>
           <Grommet theme={Theme} themeMode={darkTheme ? "dark" : "light"} full>
             <Box background="background-back" fill >
               <Grid
