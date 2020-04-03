@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Box, Button, Text, TextInput } from "grommet"
 import { useForm } from "react-hook-form";
 import { Save } from "grommet-icons";
@@ -8,7 +8,7 @@ interface Props { }
 
 export const AccountEdit: React.FC<Props> = () => {
     const [space, name, getSpace] = useContext(SpaceContext)
-    const { register, handleSubmit, errors, setValue, formState } = useForm()
+    const { register, handleSubmit, errors, formState } = useForm()
 
     // useEffect(() => {
     //     if (name) {

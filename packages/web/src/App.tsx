@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Grommet, Heading } from 'grommet';
+import { Box, Grid, Grommet, Heading, Text } from 'grommet';
 import { Navigation } from './components/Navigation';
 import { Sidebar } from './components/Sidebar';
 import { Switch, BrowserRouter, Route } from "react-router-dom";
 import { HomePage } from './pages/Home';
 import { Theme } from './utils/Theme';
 import { use3Box } from './utils/use3Box';
+import { CustomerPage } from './pages/CustomerPage';
 
 export const DarkTheme = React.createContext<[boolean, (boolean: boolean) => void]>([false, (arg: boolean) => { }])
-export const SpaceContext = React.createContext<[any, string | undefined, () => void]>([{}, undefined, () => { }])
+export const SpaceContext = React.createContext<[any, string | undefined, () => void, string | undefined]>([{}, undefined, () => { }, undefined])
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
-  const { space, getSpace, name } = use3Box()
+  const { space, getSpace, name, address } = use3Box()
 
   const GridBox: React.FC<{ gridArea: string }> = ({ children, gridArea }) => (
     <Box gridArea={gridArea} border="all" background="background-front">
@@ -32,7 +33,7 @@ function App() {
   return (
     <BrowserRouter>
       <DarkTheme.Provider value={[darkTheme, setDarkTheme]}>
-        <SpaceContext.Provider value={[space, name, getSpace]}>
+        <SpaceContext.Provider value={[space, name, getSpace, address]}>
           <Grommet theme={Theme} themeMode={darkTheme ? "dark" : "light"} full>
             <Box background="background-back" fill >
               <Grid
@@ -56,16 +57,23 @@ function App() {
                 </GridBox>
 
                 <GridBox gridArea="main">
-                  <Box pad="small"> {/* Need som custom margin, dunno why yet. */}
-                    <Switch>
-                      <Route exact path="/">
-                        <HomePage></HomePage>
-                      </Route>
-                      <Route exact path="/XXpage">
-                        {/* <Page></Page> */}
-                      </Route>
-                    </Switch>
-                  </Box>
+                  {space ?
+                    <Box pad="small"> {/* Need som custom margin, dunno why yet. */}
+                      <Switch>
+                        <Route exact path="/">
+                          <HomePage></HomePage>
+                        </Route>
+                        <Route exact path="/customers">
+                          <CustomerPage></CustomerPage>
+                        </Route>
+                      </Switch>
+                    </Box>
+                    :
+                    <Box>
+                      <Text> Loading space...</Text>
+                    </Box>
+                  }
+
                 </GridBox>
 
                 <GridBox gridArea="footer">

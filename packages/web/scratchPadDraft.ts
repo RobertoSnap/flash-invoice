@@ -32,3 +32,14 @@
 //     setBox(tempBox);
 //   }
 // };
+
+// {
+//         defaultValues: {
+//             name: "Testcompany",
+//             email: "test@test.com",
+//             orgNumber: "123123123",
+//             address1: "Testroad 1",
+//             postcode: 1234,
+//             city: "Oslo",
+//         }
+//     }

@@ -9,6 +9,10 @@ export const use3Box = () => {
   const [name, setName] = useState<string>();
 
   const getSpace = async () => {
+    // const spaceEncoded = localStorage.getItem("space");
+    // if (spaceEncoded) {
+    //   setSpace(JSON.parse(spaceEncoded));
+    // }
     if (address) {
       const tempBox = await box3.openBox(
         address,
@@ -20,9 +24,11 @@ export const use3Box = () => {
       await tempSpace.syncDone;
       console.log("Space has been synced");
       setSpace(tempSpace);
+
       tempSpace.public.get("name").then((name: string) => {
         if (name) setName(name);
       });
+      // localStorage.setItem("space", JSON.stringify(Object.freeze(tempSpace)));
     } else {
       console.log("Skipped getting space because no address from web3");
     }
@@ -35,3 +41,21 @@ export const use3Box = () => {
     address
   };
 };
+
+export interface CustomerData {
+  name: string;
+  email: string;
+  orgNumber: string;
+  address1: string;
+  postcode: string;
+  city: string;
+}
+
+export interface FlashInvoiceAccountPublic {
+  name: string;
+}
+
+export interface FlashInvoiceAccountPrivate {
+  customerList: string[];
+  customers: { [customerId: string]: CustomerData };
+}
