@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Text, TextInput, Grid, Select } from "grommet"
 import { Save } from "grommet-icons";
-import { use3Box } from '../../utils/use3Box';
+import { use3Box, Customer } from '../../utils/use3Box';
 import { useWeb3 } from '../../utils/useWeb3';
 
 interface Props { }
@@ -41,7 +41,27 @@ export const InvoiceCreate: React.FC<Props> = () => {
         setIsSubmitting(false)
     }
 
-    const [customers, setCustomers] = useState([]);
+    const [customers, setCustomers] = useState<Customer[]>([]);
+
+    useEffect(() => {
+        const doAsync = async () => {
+            const space = await getSpace()
+            const thread = await space.joinThread('customerList', {
+                // firstModerator: address,
+                members: true
+            })
+            const posts = await thread.getPosts()
+            const promises = posts.map(({ postId, message }: { postId: string, message: string }) => {
+                return space.private.get(postId)
+            })
+            const customers = (await Promise.all(promises)).filter((maybeCustomer: any) => {
+                return maybeCustomer && maybeCustomer.name && typeof (maybeCustomer.name) === "string"
+            }) as Customer[]
+            setCustomers(customers)
+        };
+        doAsync();
+    }, [])
+
     return (
         <>
             <Box gap="small">
@@ -52,9 +72,10 @@ export const InvoiceCreate: React.FC<Props> = () => {
                     <Grid columns={['xsmall', 'flex']} gap="small" >
                         <Text alignSelf="center">Customer</Text>
                         <Select
-                            options={['small', 'medium', 'large']}
-                            value={customers}
+                            options={customers}
+                            value={form.customer}
                             onChange={({ option }) => setForm(old => ({ ...old, customer: option }))}
+
                         />
                     </Grid>
                 </Box>
@@ -63,7 +84,7 @@ export const InvoiceCreate: React.FC<Props> = () => {
 
                 <Button
                     icon={<Save />}
-                    label="Create"
+                    label="Create invoice"
                     type="submit"
                     disabled={isSubmitting}
                     color="status-ok"

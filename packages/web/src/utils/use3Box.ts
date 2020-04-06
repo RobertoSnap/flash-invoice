@@ -17,17 +17,17 @@ export const use3Box = () => {
   };
 
   return {
-    getSpace
+    getSpace,
   };
 };
 
-export interface CustomerData {
-  name: string;
-  email: string;
-  orgNumber: string;
-  address1: string;
-  postcode: string;
-  city: string;
+export interface Customer {
+  name?: string;
+  email?: string;
+  orgNumber?: number;
+  address1?: string;
+  postcode?: number;
+  city?: string;
 }
 
 export interface FlashInvoiceAccountPublic {
@@ -36,5 +36,5 @@ export interface FlashInvoiceAccountPublic {
 
 export interface FlashInvoiceAccountPrivate {
   customerList: string[];
-  customers: { [customerId: string]: CustomerData };
+  customers: { [customerId: string]: Customer };
 }

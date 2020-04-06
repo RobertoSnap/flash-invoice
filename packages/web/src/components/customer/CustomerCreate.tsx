@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
 import { Box, Button, Text, TextInput, Grid } from "grommet"
 import { Save } from "grommet-icons";
-import { use3Box } from '../../utils/use3Box';
+import { use3Box, Customer } from '../../utils/use3Box';
 // import { useWeb3 } from '../../utils/useWeb3';
 
 interface Props { }
 
-export interface CreateCustomerForm {
-    name?: string
-    email?: string
-    orgNumber?: number
-    address1?: string
-    postcode?: number
-    city?: string
-}
+
 export const CustomerCreate: React.FC<Props> = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { getSpace } = use3Box()
     // const { getWeb3, getAddress } = useWeb3()
 
-    const [form, setForm] = useState<CreateCustomerForm>({});
+    const [form, setForm] = useState<Customer>({});
 
     const setTestValues = () => {
         setForm({
@@ -45,7 +38,7 @@ export const CustomerCreate: React.FC<Props> = () => {
             members: true
         })
         const postId = await thread.post(randomId)
-        const postData = await space.private.set(postId, form)
+        const postData = await space.private.set(postId, { ...form, id: postId })
         console.log("postData", postData);
 
         setIsSubmitting(false)
@@ -117,7 +110,7 @@ export const CustomerCreate: React.FC<Props> = () => {
 
                 <Button
                     icon={<Save />}
-                    label="Create"
+                    label="Create customer"
                     type="submit"
                     disabled={isSubmitting}
                     color="status-ok"
