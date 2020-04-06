@@ -6,6 +6,7 @@ import { Switch, BrowserRouter, Route } from "react-router-dom";
 import { HomePage } from './pages/Home';
 import { Theme } from './utils/Theme';
 import { CustomerPage } from './pages/CustomerPage';
+import { InvoiceCreate } from './components/invoice/InvoiceCreate';
 
 export const DarkTheme = React.createContext<[boolean, (boolean: boolean) => void]>([false, (arg: boolean) => { }])
 
@@ -54,6 +55,9 @@ function App() {
                     </Route>
                     <Route exact path="/customers">
                       <CustomerPage></CustomerPage>
+                    </Route>
+                    <Route exact path="/invoice">
+                      <InvoiceCreate></InvoiceCreate>
                     </Route>
                   </Switch>
                 </Box>

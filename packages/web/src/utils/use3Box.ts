@@ -12,6 +12,7 @@ export const use3Box = () => {
     const box = await box3.openBox(address, await (await getWeb3()).provider);
     const space = await box.openSpace("flash-invoice");
     await space.syncDone;
+    console.log("Space sync done");
     return space;
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Text, TextInput } from "grommet"
 import { Save } from "grommet-icons";
 import { use3Box } from '../../utils/use3Box';

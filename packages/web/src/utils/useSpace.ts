@@ -1,5 +1,5 @@
-export const useSpace = (space: any) => {
-  const getName = async () => {
+export const useSpace = () => {
+  const getName = async (space: any) => {
     return await space.public.get("name");
   };
 

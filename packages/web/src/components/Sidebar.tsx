@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav, Button, ThemeContext } from "grommet"
-import { Home, Sign, User, Cluster, Tools } from "grommet-icons"
+import { Home, Sign, Document, Cluster, Tools } from "grommet-icons"
 import {
     Link
 } from "react-router-dom";
@@ -19,7 +19,7 @@ export const Sidebar: React.FC = () => {
             <Nav direction="column" pad="small" align="start">
                 {navItem("/", "Home", <Home />)}
                 {navItem("/customers", "Customers", <Sign />)}
-                {navItem("/XXpage", "XXpage", <User />)}
+                {navItem("/invoice", "Invoice", <Document />)}
                 {navItem("/XXpage", "XXpage", <Cluster />)}
                 {navItem("/XXpage", "XXpage", <Tools />)}
 

@@ -10,18 +10,17 @@ import { useSpace } from "../utils/useSpace";
 export const Account: React.FC = () => {
     // const size = React.useContext<string>(ResponsiveContext);
     const [show, setShow] = useState(false);
-    const [space, setSpace] = useState();
     const { getSpace } = use3Box()
-    const { getName } = useSpace(space)
+    const { getName } = useSpace()
     const [name, setName] = useState<string | undefined>();
 
     useEffect(() => {
         const doAsync = async () => {
-            setSpace(await getSpace())
-            setName(await getName())
+            const space = await getSpace()
+            setName(await getName(space))
         };
         doAsync();
-    })
+    }, [getSpace, getName])
 
     return (
         <Box>
@@ -38,7 +37,7 @@ export const Account: React.FC = () => {
 
                 >
                     <Box margin="large" pad="large" gap="small">
-                        {!space &&
+                        {!name &&
                             <Box align="center" gap="small">
                                 <Text>Fetching your account...</Text>
                                 <Rotate>
@@ -46,7 +45,7 @@ export const Account: React.FC = () => {
                                 </Rotate>
                             </Box>
                         }
-                        {space && name &&
+                        {name &&
                             <AccountEdit name={name} />
                         }
                         <Button label="close" onClick={() => setShow(false)} color="status-warning" hoverIndicator />

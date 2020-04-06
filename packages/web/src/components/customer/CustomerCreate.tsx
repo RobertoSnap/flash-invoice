@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Text, TextInput, Grid } from "grommet"
 import { Save } from "grommet-icons";
 import { use3Box } from '../../utils/use3Box';
-import { useWeb3 } from '../../utils/useWeb3';
+// import { useWeb3 } from '../../utils/useWeb3';
 
 interface Props { }
 
@@ -17,7 +17,7 @@ export interface CreateCustomerForm {
 export const CustomerCreate: React.FC<Props> = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { getSpace } = use3Box()
-    const { getWeb3, getAddress } = useWeb3()
+    // const { getWeb3, getAddress } = useWeb3()
 
     const [form, setForm] = useState<CreateCustomerForm>({});
 
@@ -36,15 +36,18 @@ export const CustomerCreate: React.FC<Props> = () => {
         setIsSubmitting(true)
         const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         const space = await getSpace()
-        const web3 = await getWeb3()
-        const address = await getAddress(web3)
-        console.log(address, randomId);
+        // const web3 = await getWeb3()
+        // const address = await getAddress(web3)
+        console.log("RandomID", randomId);
 
         const thread = await space.joinThread('customerList', {
-            firstModerator: address,
+            // firstModerator: address,
             members: true
         })
-        console.log(thread);
+        const postId = await thread.post(randomId)
+        const postData = await space.private.set(postId, form)
+        console.log("postData", postData);
+
         setIsSubmitting(false)
     }
 
@@ -85,8 +88,6 @@ export const CustomerCreate: React.FC<Props> = () => {
                         />
                     </Grid>
                 </Box>
-
-
 
                 <Box>
                     <Grid columns={['xsmall', 'flex']} gap="small">
