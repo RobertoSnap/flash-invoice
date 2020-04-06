@@ -1,15 +1,27 @@
 import { Box, Button, Layer, Text } from "grommet"
 import { User, BusinessService } from "grommet-icons";
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Rotate } from "../utils/Rotate";
 
 import { AccountEdit } from "./account/AccountEdit";
-import { SpaceContext } from "../App";
+import { use3Box } from "../utils/use3Box";
+import { useSpace } from "../utils/useSpace";
 
 export const Account: React.FC = () => {
     // const size = React.useContext<string>(ResponsiveContext);
-    const [space, name] = useContext(SpaceContext)
     const [show, setShow] = useState(false);
+    const [space, setSpace] = useState();
+    const { getSpace } = use3Box()
+    const { getName } = useSpace(space)
+    const [name, setName] = useState<string | undefined>();
+
+    useEffect(() => {
+        const doAsync = async () => {
+            setSpace(await getSpace())
+            setName(await getName())
+        };
+        doAsync();
+    })
 
     return (
         <Box>
@@ -34,8 +46,8 @@ export const Account: React.FC = () => {
                                 </Rotate>
                             </Box>
                         }
-                        {space &&
-                            <AccountEdit />
+                        {space && name &&
+                            <AccountEdit name={name} />
                         }
                         <Button label="close" onClick={() => setShow(false)} color="status-warning" hoverIndicator />
                     </Box>

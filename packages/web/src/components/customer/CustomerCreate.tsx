@@ -1,19 +1,43 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Text, TextInput, Grid } from "grommet"
-import { useForm } from "react-hook-form";
 import { Save } from "grommet-icons";
-import { SpaceContext } from '../../App';
+import { use3Box } from '../../utils/use3Box';
+import { useWeb3 } from '../../utils/useWeb3';
 
 interface Props { }
 
+export interface CreateCustomerForm {
+    name?: string
+    email?: string
+    orgNumber?: number
+    address1?: string
+    postcode?: number
+    city?: string
+}
 export const CustomerCreate: React.FC<Props> = () => {
-    const [space, , , address] = useContext(SpaceContext)
-    const { register, handleSubmit, errors, formState, setValue } = useForm()
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { getSpace } = use3Box()
+    const { getWeb3, getAddress } = useWeb3()
 
+    const [form, setForm] = useState<CreateCustomerForm>({});
 
-    const onSubmit = async (data: any) => {
-        console.log("data", data);
+    const setTestValues = () => {
+        setForm({
+            "name": "Testcompany LTD",
+            "email": "test@test.com",
+            "orgNumber": 999555444,
+            "address1": "Test road 1",
+            "postcode": 1551,
+            "city": "Oslo",
+        })
+    }
+
+    const onSubmit = async () => {
+        setIsSubmitting(true)
         const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const space = await getSpace()
+        const web3 = await getWeb3()
+        const address = await getAddress(web3)
         console.log(address, randomId);
 
         const thread = await space.joinThread('customerList', {
@@ -21,115 +45,87 @@ export const CustomerCreate: React.FC<Props> = () => {
             members: true
         })
         console.log(thread);
+        setIsSubmitting(false)
     }
-
-    const setTestValues = () => {
-        setValue("name", "Testcompany LTD")
-        setValue("email", "test@test.com")
-        setValue("orgNumber", 999555444)
-        setValue("address1", "Test road 1")
-        setValue("postcode", 1551)
-        setValue("city", "Oslo")
-    }
-
-    useEffect(() => {
-        console.log("errors =>", errors);
-    }, [errors])
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Box gap="small">
-                    <Text size="large">Create customer</Text>
 
-                    <Box border="top"></Box>
-                    <Box>
-                        <Grid columns={['xsmall', 'flex']} gap="small" >
-                            <Text alignSelf="center">Name</Text>
-                            <TextInput
-                                ref={register({
-                                    required: true,
-                                })}
-                                name="name"
-                            />
-                        </Grid>
-                        {errors.name && <Text size="small" color="status-error">*</Text>}
-                    </Box>
+            <Box gap="small">
+                <Text size="large">Create customer</Text>
 
-                    <Box>
-                        <Grid columns={['xsmall', 'flex']} gap="small">
-                            <Text alignSelf="center">Email</Text>
-                            <TextInput
-                                ref={register({
-                                    required: true,
-                                })}
-                                name="email"
-                            />
-                        </Grid>
-                        {errors.email && <Text size="small" color="status-error">*</Text>}
-                    </Box>
-
-                    <Box>
-                        <Grid columns={['xsmall', 'flex']} gap="small" >
-                            <Text alignSelf="center">Org. number</Text>
-                            <TextInput
-                                ref={register({
-                                    required: true,
-                                })}
-                                name="orgNumber"
-                            />
-                        </Grid>
-                        {errors.orgNumber && <Text size="small" color="status-error">*</Text>}
-                    </Box>
-
-
-
-                    <Box>
-                        <Grid columns={['xsmall', 'flex']} gap="small">
-                            <Text alignSelf="center">Address1</Text>
-                            <TextInput
-                                ref={register({
-                                    required: true,
-                                })}
-                                name="address1"
-                            />
-                        </Grid>
-                        {errors.address1 && <Text size="small" color="status-error">*</Text>}
-                    </Box>
-
-                    <Box>
-                        <Grid columns={['xsmall', 'xsmall', "flex"]} gap="small">
-                            <Text alignSelf="center">Postcode</Text>
-                            <TextInput
-                                ref={register({
-                                    max: 4,
-                                    min: 4
-                                })}
-                                name="postcode"
-                            />
-                            <TextInput
-                                ref={register({
-
-                                })}
-
-                                name="city"
-                            />
-                        </Grid>
-                        {errors.postcode && <Text size="small" color="status-error">*</Text>}
-                    </Box>
-
-                    <Button
-                        icon={<Save />}
-                        label="Create"
-                        type="submit"
-                        disabled={formState.isSubmitting || Object.keys(formState.touched).length === 0}
-                        color="status-ok"
-                        hoverIndicator
-                    />
+                <Box border="top"></Box>
+                <Box>
+                    <Grid columns={['xsmall', 'flex']} gap="small" >
+                        <Text alignSelf="center">Name</Text>
+                        <TextInput
+                            value={form.name}
+                            name="name"
+                        />
+                    </Grid>
                 </Box>
-            </form>
+
+                <Box>
+                    <Grid columns={['xsmall', 'flex']} gap="small">
+                        <Text alignSelf="center">Email</Text>
+                        <TextInput
+                            value={form.email}
+                            name="email"
+                        />
+                    </Grid>
+                </Box>
+
+                <Box>
+                    <Grid columns={['xsmall', 'flex']} gap="small" >
+                        <Text alignSelf="center">Org. number</Text>
+                        <TextInput
+                            value={form.orgNumber}
+                            name="orgNumber"
+                            type={"number"}
+                        />
+                    </Grid>
+                </Box>
+
+
+
+                <Box>
+                    <Grid columns={['xsmall', 'flex']} gap="small">
+                        <Text alignSelf="center">Address1</Text>
+                        <TextInput
+                            value={form.address1}
+                            name="address1"
+                        />
+                    </Grid>
+                </Box>
+
+                <Box>
+                    <Grid columns={['xsmall', 'xsmall', "flex"]} gap="small">
+                        <Text alignSelf="center">Postcode</Text>
+                        <TextInput
+                            value={form.postcode}
+                            name="postcode"
+                            type={"number"}
+
+                        />
+                        <TextInput
+                            value={form.city}
+                            name="city"
+                        />
+                    </Grid>
+                </Box>
+
+                <Button
+                    icon={<Save />}
+                    label="Create"
+                    type="submit"
+                    disabled={isSubmitting}
+                    color="status-ok"
+                    hoverIndicator
+                    onClick={() => onSubmit()}
+                />
+            </Box>
             {process.env.NODE_ENV === "development" &&
-                <Button label="Set test values" onClick={() => setTestValues()} size="small" margin="medium"></Button>
+                <Button label="Set test values" onClick={() => setTestValues()} size="small" margin={{ top: "small" }}></Button>
             }
         </>
     )
