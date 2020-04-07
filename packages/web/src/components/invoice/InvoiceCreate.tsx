@@ -1,51 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Text, TextInput, Grid, Select } from "grommet"
+import { Box, Button, Text, /* TextInput, */ Grid, Select, Calendar, Layer } from "grommet"
 import { Save } from "grommet-icons";
 import { use3Box, Customer } from '../../utils/use3Box';
-import { useWeb3 } from '../../utils/useWeb3';
+// import { useWeb3 } from '../../utils/useWeb3';
+import { useForm, Controller } from 'react-hook-form';
 
 interface Props { }
 
-export interface CreateInvoiceForm {
-    customer?: string
+interface CreateInvoice {
+    customer?: string,
+    saleDate?: string
+}
+
+const defaultValues: CreateInvoice = {
+    saleDate: (new Date()).toISOString()
 }
 export const InvoiceCreate: React.FC<Props> = () => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const { getSpace } = use3Box()
-    const { getWeb3, getAddress } = useWeb3()
+    // const { getWeb3, getAddress } = useWeb3()
+    const { handleSubmit, control, formState, errors, getValues } = useForm<CreateInvoice>({
+        defaultValues
+    })
+    const [customers, setCustomers] = useState<Customer[]>([{
+        name: "Testcompany LTD",
+        email: "test@test.com2",
+        orgNumber: 124124,
+        address1: "Test road 1",
+        postcode: 15500,
+        city: "Oslo",
+        id: "zdpuArsiMimTL34ebWuX2nFcmYmWnx6rqB44PUG7ZSbukRRov"
+    }]);
+    const [showSaleDateCalender, setShowSaleDateCalender] = useState(false);
 
-    const [form, setForm] = useState<CreateInvoiceForm>({});
 
-    const setTestValues = () => {
-        setForm({
-            "customer": "111"
-        })
-    }
+    const onSubmit = async (data: CreateInvoice) => {
+        console.log("data", data);
 
-    const onSubmit = async () => {
-        setIsSubmitting(true)
-        const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         const space = await getSpace()
-        // const web3 = await getWeb3()
-        // const address = await getAddress(web3)
-        console.log("RandomID", randomId);
-
-        const thread = await space.joinThread('customerList', {
+        const thread = await space.joinThread('invoiceList', {
             // firstModerator: address,
             members: true
         })
-        const postId = await thread.post(randomId)
-        const postData = await space.private.set(postId, form)
+        const postId = await thread.post()
+        const postData = await space.private.set(postId, { ...data, id: postId })
+        console.log("postId", postId);
         console.log("postData", postData);
-
-        setIsSubmitting(false)
     }
 
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    useEffect(() => {
+        console.log(getValues())
+        console.log(errors)
+    }, [formState, getValues, errors])
 
     useEffect(() => {
-        const doAsync = async () => {
-            const space = await getSpace()
+        console.log("run", getSpace);
+
+        getSpace().then(async space => {
             const thread = await space.joinThread('customerList', {
                 // firstModerator: address,
                 members: true
@@ -55,46 +65,89 @@ export const InvoiceCreate: React.FC<Props> = () => {
                 return space.private.get(postId)
             })
             const customers = (await Promise.all(promises)).filter((maybeCustomer: any) => {
-                return maybeCustomer && maybeCustomer.name && typeof (maybeCustomer.name) === "string"
+                return maybeCustomer && maybeCustomer.name && maybeCustomer.id && typeof maybeCustomer.id === "string" && typeof (maybeCustomer.name) === "string"
             }) as Customer[]
+            console.log("customers", customers);
+
             setCustomers(customers)
-        };
-        doAsync();
+        })
     }, [])
 
     return (
         <>
-            <Box gap="small">
-                <Text size="large">Create invoice</Text>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Box gap="small">
+                    <Text size="large">Create invoice</Text>
 
-                <Box border="top"></Box>
-                <Box>
-                    <Grid columns={['xsmall', 'flex']} gap="small" >
-                        <Text alignSelf="center">Customer</Text>
-                        <Select
-                            options={customers}
-                            value={form.customer}
-                            onChange={({ option }) => setForm(old => ({ ...old, customer: option }))}
+                    <Box border="top"></Box>
+                    <Box gap="medium">
+                        <Grid columns={['xsmall', 'flex']} gap="small" >
+                            <Text alignSelf="center">Customer</Text>
+                            <Controller
+                                as={
+                                    <Select
+                                        options={customers}
+                                        labelKey={(customer: Customer) => customer.name}
+                                        placeholder={customers.length === 0 ? "Getting customer list..." : "Choose customer"}
+                                        disabled={customers.length === 0}
+                                        valueKey={(customer: Customer) => customer.id}
+                                    />
+                                }
 
-                        />
-                    </Grid>
+                                name="customer"
+                                control={control}
+                                rules={{ required: true }}
+                            />
+                        </Grid>
+
+                        <Grid columns={['xsmall', 'xsmall']} gap="small" >
+                            <Text alignSelf="center">Sale date</Text>
+                            <Box>
+                                <Button label="Pick" onClick={() => setShowSaleDateCalender(true)} size="small" />
+                                {showSaleDateCalender && (
+                                    <Layer
+                                        onEsc={() => setShowSaleDateCalender(false)}
+                                        onClickOutside={() => setShowSaleDateCalender(false)}
+                                    >
+                                        <Box margin="medium" gap="small">
+
+                                            <Controller
+                                                as={
+                                                    <Calendar
+                                                        size="small"
+                                                        date={(new Date()).toISOString()}
+                                                        firstDayOfWeek={1}
+                                                    // onSelect={(option: any) => {
+                                                    //     console.log("cal", option);
+                                                    // }}
+                                                    />
+                                                }
+                                                onChangeName={"onSelect"}
+                                                name="saleDate"
+                                                control={control}
+                                                rules={{ required: true }}
+                                            />
+                                            <Button label="close" type="button" onClick={() => setShowSaleDateCalender(false)} />
+                                        </Box>
+                                    </Layer>
+                                )}
+                            </Box>
+
+                        </Grid>
+                    </Box>
+
+
+
+                    <Button
+                        icon={<Save />}
+                        label="Create invoice"
+                        type="submit"
+                        disabled={formState.isSubmitting || Object.keys(formState.touched).length === 0}
+                        color="status-ok"
+                        hoverIndicator
+                    />
                 </Box>
-
-
-
-                <Button
-                    icon={<Save />}
-                    label="Create invoice"
-                    type="submit"
-                    disabled={isSubmitting}
-                    color="status-ok"
-                    hoverIndicator
-                    onClick={() => onSubmit()}
-                />
-            </Box>
-            {process.env.NODE_ENV === "development" &&
-                <Button label="Set test values" onClick={() => setTestValues()} size="small" margin={{ top: "small" }}></Button>
-            }
+            </form>
         </>
     )
 

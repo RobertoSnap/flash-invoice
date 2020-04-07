@@ -1,6 +1,0 @@
-{
-  "parser": "esprima",
-  "rules": {
-    "no-unused-vars": 0
-  }
-}

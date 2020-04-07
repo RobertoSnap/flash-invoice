@@ -1,0 +1,38 @@
+{
+  "name": "@robertosnap/flash-invoice-web2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cleanup": "rm -rf .cache .parcel-cache dist",
+    "build": "yarn run cleanup && parcel build src/index.html",
+    "start": "yarn run cleanup && parcel serve src/index.html",
+    "watch": "yarn run cleanup && parcel watch src/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "3box": "^1.17.1",
+    "@now/node": "^1.5.0",
+    "@types/node": "^13.11.0",
+    "@types/react": "^16.9.32",
+    "@types/react-dom": "^16.9.6",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/styled-components": "^5.0.1",
+    "axios": "^0.19.2",
+    "ethers": "^4.0.46",
+    "grommet": "^2.12.0",
+    "grommet-icons": "^4.4.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-hook-form": "^5.3.1",
+    "react-router-dom": "^5.1.2",
+    "styled-components": "^5.1.0",
+    "typescript": "^3.8.3",
+    "web3modal": "^1.2.1"
+  }
+}

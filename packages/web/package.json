@@ -1,5 +1,5 @@
 {
-  "name": "@flash-invoice/web",
+  "name": "@robertosnap/flash-invoice-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,7 +16,7 @@
     "@types/styled-components": "^5.0.1",
     "axios": "^0.19.2",
     "ethers": "^5.0.0-beta.179",
-    "grommet": "^2.11.2",
+    "grommet": "https://github.com/grommet/grommet/tarball/stable",
     "grommet-icons": "^4.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

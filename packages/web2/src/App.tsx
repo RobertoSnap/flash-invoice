@@ -10,12 +10,6 @@ import { InvoiceCreate } from './components/invoice/InvoiceCreate';
 
 export const DarkTheme = React.createContext<[boolean, (boolean: boolean) => void]>([false, (arg: boolean) => { }])
 
-// get rid of annoying metamask notice
-declare global {
-  interface Window { ethereum: any }
-}
-window.ethereum["autoRefreshOnNetworkChange"] = false
-
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
 

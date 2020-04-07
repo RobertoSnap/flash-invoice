@@ -28,10 +28,13 @@ export interface Customer {
   address1?: string;
   postcode?: number;
   city?: string;
-  id: string;
 }
 
-export interface Invoice {
-  customer?: string;
-  saleDate?: string;
+export interface FlashInvoiceAccountPublic {
+  name: string;
+}
+
+export interface FlashInvoiceAccountPrivate {
+  customerList: string[];
+  customers: { [customerId: string]: Customer };
 }
