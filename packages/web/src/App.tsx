@@ -14,7 +14,9 @@ export const DarkTheme = React.createContext<[boolean, (boolean: boolean) => voi
 declare global {
   interface Window { ethereum: any }
 }
-window.ethereum["autoRefreshOnNetworkChange"] = false
+if (window.ethereum) {
+  window.ethereum["autoRefreshOnNetworkChange"] = false
+}
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(true);
